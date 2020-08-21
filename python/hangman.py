@@ -2,7 +2,7 @@ import random
 
 def readfile():
     words=[]
-    path="./data/toeic1500.dat"
+    path="../data/toeic1500.dat"
     with open(path,encoding='utf-8') as f:
         for line in f:
             words.append(line.strip())
