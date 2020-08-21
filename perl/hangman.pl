@@ -3,72 +3,95 @@ use strict;
 use warnings;
 
 sub readfile{
-    my $path="../data/toeic1500.dat";
-    open(IN,$path);
-    my @words=<IN>;
+	my $path="../data/toeic1500.dat";
+	open(IN,$path);
+	chomp(my @words=<IN>);
 
-    return @words;
+	return @words;
 }
 
-#sub hangman(){
-#    words=readfile()
-#    wrong=[]
-#    correct=[]
-#
-#    while True:
-#        word=random.choice(words)
-#        entered=[]
-#        remain=7
-#        while True:
-#            print("\033c")
-#            print(word)
-#            print("hint:",end='')
-#            for c in word:
-#                if c in entered:
-#                    print(c,end='')
-#                else:
-#                    print('-',end='')
-#            print()
-#
-#            print("used:",end='')
-#            for c in range(ord('a'),ord('z')+1):
-#                if chr(c) in entered:
-#                    print("\033[41m{}\033[49m".format(chr(c)),end='')
-#                else:
-#                    print(chr(c),end='')
-#            print()
-#
-#            c=input("[remain:{}]>>>".format(remain))
-#            if (len(c)==1) and (ord('a') <= ord(c) and ord(c) <= ord('z')) and ((c in entered) == False):
-#                entered.append(c)
-#                if (c in word) == False:
-#                    remain-=1
-#
-#                is_correct=True
-#                for e in word:
-#                    if (e in entered) == False:
-#                        is_correct=False
-#
-#                if is_correct:
-#                    print("correct!")
-#                    correct.append(word)
-#                    break
-#
-#                if remain==0:
-#                    print("wrong...")
-#                    wrong.append(word)
-#                    break
-#
-#        key=input("continue?[y/n]>>")
-#        if key == 'n':
-#            print("correct answer rate:{}".format(len(correct)/(len(correct)+len(wrong))*100))
-#            print("-----wrong words-----")
-#            for word in wrong:
-#                print(word)
-#            return
-#}
+sub hangman{
+	my $remain;
+	my $word;
+	my @words=&readfile;
+	my @wrong;
+	my @correct;
+	my @entered;
+
+	while(1){
+		$word=$words[int(rand(@words))];
+		@entered=();
+		$remain=7;
+
+		while(1){
+			say("\033c");
+			print("hint:");
+
+			for my $c (split //,$word){
+				if($c ~~ @entered){
+					print($c);
+				}else{
+					print('-');
+				}
+			}
+			say("");
+
+			print("used:");
+			for my $c ('a'..'z'){
+				if($c ~~ @entered){
+					print("\033[41m$c\033[49m");
+				}else{
+					print($c);
+				}
+			}
+			say("");
+
+			print("[remain:$remain]>>>");
+			chomp(my $c=<STDIN>);
+
+			if((length($c)==1) && ($c=~/[a-z]/) && !grep(/^$c$/,@entered)){
+				push(@entered,$c);
+
+				if($word!~/$c/){
+					$remain--;
+				}
+
+				my $is_correct=1;
+				for my $e (split //,$word){
+					if(($e ~~ @entered)==0){
+						$is_correct=0;
+					}
+				}
+
+				if($is_correct){
+					say("correct!");
+					push(@correct,$word);
+					last;
+				}
+
+				if($remain==0){
+					say("wrong...");
+					push(@wrong,$word);
+					last;
+				}
+			}
+		}
+
+		print("continue?[y/n]>>");
+		chomp(my $key=<STDIN>);
+		if($key eq 'n'){
+			my $rate=scalar(@correct)/(scalar(@correct)+scalar(@wrong))*100;
+			say("correct answer rate:${rate}%");
+			say("-----wrong words-----");
+			for my $word (@wrong){
+				say($word);
+			}
+			return;
+		}
+	}
+
+}
 
 
-readfile();
-#&hangman;
+hangman();
 
