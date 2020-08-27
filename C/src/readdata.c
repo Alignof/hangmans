@@ -26,7 +26,7 @@ void readfile(Words **words,int argc,char **argv){
 	start=buffer;
 
 	if(argc==1){
-		if ((fp=fopen("./data/toeic1500.dat", "r")) == NULL) {
+		if ((fp=fopen("../data/toeic1500.dat", "r")) == NULL) {
 			fprintf(stderr,"File open error.\n");
 			exit(1);
 		}
