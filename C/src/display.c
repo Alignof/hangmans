@@ -2,9 +2,9 @@
 
 bool hint(Words *word,bool *used,char input){
 	int i;
-	bool hit=false;
 	int counter=0;
 	char output;
+	bool hit=false;
 
 	printf("hint:");
 	for(i=0;i<word->len;i++){

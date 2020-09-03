@@ -1,34 +1,57 @@
 use std::io;
+use std::env;
+use std::fs::File;
 use std::cmp::Ordering;
+use std::io::prelude::*;
+use std::io::{BufRead, BufReader};
 use rand::Rng;
 
-fn main() {
-    println!("Guess the number:");
+struct Words{
+	len: usize,
+	string: String,
+	is_wrong: bool,
+	is_correct: bool,
+	is_answered: bool,
+}
 
-    let secret_number=rand::thread_rng().gen_range(1,101);
-    println!("The secret number is:{}",secret_number);
+fn readfile(words: &mut Vec<Words>){
+    let filepath="../data/toeic1500.dat";
+    println!("In file {}", filepath);
 
-    loop{
-        println!("Input your guess>>>");
+    let file=File::open(filepath)
+        .expect("file not found");
+    let reader=BufReader::new(file);
 
-        let mut guess=String::new();
-        io::stdin().read_line(&mut guess)
-            .expect("Failed to read line.");
-
-        let guess:u32=match guess.trim().parse(){
-            Ok(num)=>num,
-            Err(_)=>continue,
-        };
-
-        println!("You guessed: {}",guess);
-
-        match guess.cmp(&secret_number){
-            Ordering::Less=>println!("Too small!"),
-            Ordering::Greater=>println!("Too big!"),
-            Ordering::Equal=>{
-                println!("You win!");
-                break;
-            }
-        }
+    for line in reader.lines(){
+        let line=line.unwrap();
+        words.push(
+                Words{
+                    len:line.len(),
+                    string:line,
+                    is_wrong:false,
+                    is_correct:false,
+                    is_answered:false,
+                }
+            );
     }
+}
+
+fn playgame(words: Vec<Words>){
+    let mut remain: u32;
+    let mut input: char;
+    let mut hit: bool;
+    let mut game_continue: bool=true;
+    let used: [bool;27]=[false;27];
+
+    while(game_continue){
+        let word: Words=words[rand::thread_rng().gen_range(0,words.len())];
+
+    }
+}
+
+fn main(){
+    let mut words: Vec<Words>=Vec::new();
+
+    readfile(&mut words);
+    playgame(words);
 }
