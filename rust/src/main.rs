@@ -1,7 +1,5 @@
 use std::io;
-use std::env;
 use std::fs::File;
-use std::cmp::Ordering;
 use std::io::prelude::*;
 use std::io::{BufRead, BufReader};
 use rand::Rng;
@@ -36,9 +34,29 @@ fn readfile(words:&mut Vec<Words>){
     }
 }
 
-fn display_data(word:&Words,used:&mut [bool],input:char,remain:&mut u32){
+fn display_result(words:&mut Vec<Words>){
+    let mut wrong:f32=0.0;
+    let mut correct:f32=0.0;
+
+    for w in words {
+        if w.is_wrong {
+            println!("{}",w.string);
+            wrong+=1.0;
+        }
+
+        if w.is_correct {
+            correct+=1.0;
+        }
+    }
+	println!("-----------------------");
+	println!("wrong:{}",wrong);
+	println!("correct:{}",correct);
+	println!("correct answer rate:{}",correct/(wrong+correct)*100.0);
+}
+
+fn display_data(word:&mut Words,used:&mut [bool],input:char,remain:&mut u32){
     let mut hit:bool=false;
-    let mut ctr:u32=0;
+    let mut ctr:usize=0;
 
     println!("\x1bc");
 
@@ -55,6 +73,9 @@ fn display_data(word:&Words,used:&mut [bool],input:char,remain:&mut u32){
     }
     io::stdout().flush();
     println!("");
+    if ctr==word.len {
+        word.is_correct=true;
+    }
 
     // display used
     println!("====================================");
@@ -87,17 +108,21 @@ fn playgame(words:&mut Vec<Words>){
     let mut remain:u32;
     let mut input:String=String::new();
     let mut game_continue:bool=true;
-    let mut used:[bool;27]=[false;27];
+    let mut used:[bool;27];
     const TRY:u32=7;
 
     while game_continue {
         let range_max=words.len();
-        let word:&mut Words=&mut words[rand::thread_rng().gen_range(0,range_max)];
+        let mut word:&mut Words=&mut words[rand::thread_rng().gen_range(0,range_max)];
         if word.is_correct {continue;}
 
+        // initialize data
+        let mut used:[bool;27]=[false;27];
+
         remain=TRY;
-        display_data(&word,&mut used,'0',&mut remain);
+        display_data(&mut word,&mut used,'0',&mut remain);
         while remain>0 {
+            println!("ans:{}",word.string);
             print!("input char>>");
             io::stdout().flush();
 
@@ -112,7 +137,7 @@ fn playgame(words:&mut Vec<Words>){
             }
 
             used[(input_num as usize)-('a' as usize)]=true;
-            display_data(&word,&mut used,(input as char),&mut remain);
+            display_data(&mut word,&mut used,(input as char),&mut remain);
             println!("inputed:{}",input as u32);
 
             if word.is_correct {break;}
@@ -133,11 +158,10 @@ fn playgame(words:&mut Vec<Words>){
         io::stdin().read_line(&mut input)
             .expect("Failed to read line.");
         let mut input=input.chars().next().unwrap() as char;
+
         if input=='n' {
             game_continue=false;
         }
-
-        let mut used:[bool;27]=[false;27];
     }
 }
 
@@ -146,4 +170,5 @@ fn main(){
 
     readfile(&mut words);
     playgame(&mut words);
+    display_result(&mut words);
 }
