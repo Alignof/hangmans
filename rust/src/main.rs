@@ -58,7 +58,7 @@ fn display_data(word:&mut Words,used:&mut [bool],input:char,remain:&mut u32){
     let mut hit:bool=false;
     let mut ctr:usize=0;
 
-    println!("\x1bc");
+    //println!("\x1bc");
 
     // hint
     print!("hint:");
@@ -71,7 +71,8 @@ fn display_data(word:&mut Words,used:&mut [bool],input:char,remain:&mut u32){
             print!("-");
         }
     }
-    io::stdout().flush();
+    io::stdout().flush()
+        .expect("flush error.");
     println!("");
     if ctr==word.len {
         word.is_correct=true;
@@ -80,7 +81,8 @@ fn display_data(word:&mut Words,used:&mut [bool],input:char,remain:&mut u32){
     // display used
     println!("====================================");
     print!("used:");
-    io::stdout().flush();
+    io::stdout().flush()
+        .expect("flush error");
     for c in 'a'..'z' {
         if used[(c as usize)-('a' as usize)] {
             print!("\x1b[41m{}\x1b[49m",c);
@@ -104,9 +106,9 @@ fn display_data(word:&mut Words,used:&mut [bool],input:char,remain:&mut u32){
 }
 
 fn playgame(words:&mut Vec<Words>){
-    let mut hit:bool=false;
+    let hit:bool=false;
     let mut remain:u32;
-    let mut input:String=String::new();
+    let input:String=String::new();
     let mut game_continue:bool=true;
     let mut used:[bool;27];
     const TRY:u32=7;
@@ -124,7 +126,8 @@ fn playgame(words:&mut Vec<Words>){
         while remain>0 {
             println!("ans:{}",word.string);
             print!("input char>>");
-            io::stdout().flush();
+            io::stdout().flush()
+                .expect("flush error");
 
             let mut input=String::new();
             io::stdin().read_line(&mut input)
@@ -137,7 +140,7 @@ fn playgame(words:&mut Vec<Words>){
             }
 
             used[(input_num as usize)-('a' as usize)]=true;
-            display_data(&mut word,&mut used,(input as char),&mut remain);
+            display_data(&mut word,&mut used,input as char,&mut remain);
             println!("inputed:{}",input as u32);
 
             if word.is_correct {break;}
@@ -152,7 +155,8 @@ fn playgame(words:&mut Vec<Words>){
         word.is_answered=true;
 
 		print!("continue?[y/n]>");
-        io::stdout().flush();
+        io::stdout().flush()
+                .expect("flush error");
 
         let mut input=String::new();
         io::stdin().read_line(&mut input)
