@@ -62,8 +62,6 @@ int display_data(Words *word,bool *used,char input,int *remain){
 	if(hit==0 && input!=0) (*remain)--;
 	printf("remain[%d]:",*remain);
 	display_remain(*remain);
-
-	return hit;
 }
 
 void display_result(Words *words){

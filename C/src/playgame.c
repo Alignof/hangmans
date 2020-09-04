@@ -4,7 +4,6 @@
 void playgame(Words *words){
 	int i;
 	int remain;
-	bool hit;
 	char input=0;
 	bool game_continue=true;
 	bool used['z'-'a'+1]={0};
